@@ -25,6 +25,7 @@ class TasksComponent extends Component {
       page: 1
     },
     isModalOpen: false,
+    modalData: {},
     editedStatus: null,
     editedText: ""
   };
@@ -79,10 +80,14 @@ class TasksComponent extends Component {
     }
 
     bodyFormData.set("signature", createSignature(data));
-    console.log(createSignature(data));
     axios
       .post(`${API_HOST}//edit/${id}/?${DEVELOPER_NAME}`, bodyFormData)
       .then(({ data }) => {
+        this.setState({
+          isModalOpen: false,
+          editedStatus: null,
+          editedText: ""
+        });
         console.log(data);
       })
       .catch(error => {
@@ -144,13 +149,20 @@ class TasksComponent extends Component {
                   <small>{email}</small>
                 </p>
                 {loggedIn ? (
-                  <Button onClick={() => this.setState({ isModalOpen: true })}>
+                  <Button
+                    onClick={() =>
+                      this.setState({
+                        isModalOpen: true,
+                        modalData: { text, status, id }
+                      })
+                    }
+                  >
                     EDIT
                   </Button>
                 ) : null}
               </Card.Footer>
               <Modal
-                show={this.state.isModalOpen}
+                show={this.state.modalData.id === id}
                 onHide={() =>
                   this.setState({
                     isModalOpen: false,
@@ -168,7 +180,9 @@ class TasksComponent extends Component {
                       <Form.Label>Edit task</Form.Label>
                       <Form.Control
                         as="textarea"
-                        value={this.state.editedText || text}
+                        value={
+                          this.state.editedText || this.state.modalData.text
+                        }
                         onChange={e =>
                           this.setState({ editedText: e.target.value })
                         }
@@ -180,7 +194,9 @@ class TasksComponent extends Component {
                         type="checkbox"
                         label="Done"
                         checked={
-                          this.state.editedStatus || status ? true : false
+                          this.state.editedStatus || this.state.modalData.status
+                            ? true
+                            : false
                         }
                         onChange={e =>
                           this.setState({
@@ -206,7 +222,9 @@ class TasksComponent extends Component {
                   </Button>
                   <Button
                     variant="primary"
-                    onClick={e => this.handleEditSubmit(e, id)}
+                    onClick={e =>
+                      this.handleEditSubmit(e, this.state.modalData.id)
+                    }
                   >
                     Submit
                   </Button>

@@ -1,7 +1,7 @@
 import { LOG_IN } from "../actions/auth";
 
 const initialState = {
-  loggedIn: false
+  loggedIn: true
 };
 
 export const authReducer = (state = initialState, { type }) => {
