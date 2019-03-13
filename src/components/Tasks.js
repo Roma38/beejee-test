@@ -24,8 +24,7 @@ class TasksComponent extends Component {
       sort_direction: "asc",
       page: 1
     },
-    isModalOpen: false,
-    modalData: {},
+    modalId: null,
     editedStatus: null,
     editedText: ""
   };
@@ -84,14 +83,15 @@ class TasksComponent extends Component {
       .post(`${API_HOST}//edit/${id}/?${DEVELOPER_NAME}`, bodyFormData)
       .then(({ data }) => {
         this.setState({
-          isModalOpen: false,
+          modalId: null,
           editedStatus: null,
           editedText: ""
         });
-        console.log(data);
+        this.loadData();
       })
       .catch(error => {
         console.error(error);
+        alert("Oops... something went wrong :(");
       });
   };
 
@@ -152,8 +152,7 @@ class TasksComponent extends Component {
                   <Button
                     onClick={() =>
                       this.setState({
-                        isModalOpen: true,
-                        modalData: { text, status, id }
+                        modalId: id
                       })
                     }
                   >
@@ -162,10 +161,10 @@ class TasksComponent extends Component {
                 ) : null}
               </Card.Footer>
               <Modal
-                show={this.state.modalData.id === id}
+                show={this.state.modalId === id}
                 onHide={() =>
                   this.setState({
-                    isModalOpen: false,
+                    modalId: null,
                     editedStatus: null,
                     editedText: ""
                   })
@@ -180,9 +179,7 @@ class TasksComponent extends Component {
                       <Form.Label>Edit task</Form.Label>
                       <Form.Control
                         as="textarea"
-                        value={
-                          this.state.editedText || this.state.modalData.text
-                        }
+                        value={this.state.editedText || text}
                         onChange={e =>
                           this.setState({ editedText: e.target.value })
                         }
@@ -194,9 +191,7 @@ class TasksComponent extends Component {
                         type="checkbox"
                         label="Done"
                         checked={
-                          this.state.editedStatus || this.state.modalData.status
-                            ? true
-                            : false
+                          this.state.editedStatus || status ? true : false
                         }
                         onChange={e =>
                           this.setState({
@@ -212,7 +207,7 @@ class TasksComponent extends Component {
                     variant="secondary"
                     onClick={() =>
                       this.setState({
-                        isModalOpen: false,
+                        modalId: null,
                         editedStatus: null,
                         editedText: ""
                       })
@@ -222,9 +217,7 @@ class TasksComponent extends Component {
                   </Button>
                   <Button
                     variant="primary"
-                    onClick={e =>
-                      this.handleEditSubmit(e, this.state.modalData.id)
-                    }
+                    onClick={e => this.handleEditSubmit(e, this.state.modalId)}
                   >
                     Submit
                   </Button>

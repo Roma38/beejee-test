@@ -19,7 +19,7 @@ class AddTask extends Component {
     axios
       .post(`${API_HOST}/create/?${DEVELOPER_NAME}`, bodyFormData)
       .then(({ data }) => {
-        console.log(data);
+        alert("Your task was added")
       })
       .catch(error => {
         console.error(error);

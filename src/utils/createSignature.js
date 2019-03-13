@@ -28,8 +28,4 @@ export function createSignature(obj) {
     .join("&");
 
   return md5(encodedParams);
-  // Сортировать поля все кроме токена
-  // Привести все поля и значения к финальной строке:
-  //   email=example%40example.com&status=0&text=Hello%20World%3F&token=beejee
-  // хэшировать строку md5 функцией
 }
